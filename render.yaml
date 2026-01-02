@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: jawads-bike-parts
+    env: static
+    buildCommand: echo "No build needed"
+    staticPublishPath: ./
+    envVars:
+      - key: FIREBASE_API_KEY
+        sync: false
+      - key: FIREBASE_AUTH_DOMAIN
+        sync: false
+      - key: FIREBASE_DATABASE_URL
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_STORAGE_BUCKET
+        sync: false
+      - key: FIREBASE_MESSAGING_SENDER_ID
+        sync: false
+      - key: FIREBASE_APP_ID
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
