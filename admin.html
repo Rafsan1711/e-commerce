@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Jawad's Bike Parts</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    
+    <!-- CSS Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <style>
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 260px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 2rem 1rem;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .admin-content {
+            margin-left: 260px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .admin-nav-item:hover,
+        .admin-nav-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .stat-card .stat-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        .product-form {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+        
+        @media (max-width: 992px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .admin-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="admin-app">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <div class="text-center mb-4">
+                <h4 class="gradient-text mb-1">Admin Panel</h4>
+                <p class="text-muted small mb-0">Jawad's Bike Parts</p>
+            </div>
+            
+            <nav>
+                <a class="admin-nav-item active" onclick="showSection('dashboard')">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a class="admin-nav-item" onclick="showSection('products')">
+                    <i class="fas fa-box"></i>
+                    <span>Products</span>
+                </a>
+                <a class="admin-nav-item" onclick="showSection('orders')">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Orders</span>
+                </a>
+                <a class="admin-nav-item" onclick="showSection('customers')">
+                    <i class="fas fa-users"></i>
+                    <span>Customers</span>
+                </a>
+                <a class="admin-nav-item" onclick="showSection('analytics')">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                <hr class="my-3">
+                <a class="admin-nav-item" href="/app.html">
+                    <i class="fas fa-store"></i>
+                    <span>View Shop</span>
+                </a>
+                <a class="admin-nav-item text-danger" onclick="signOut()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sign Out</span>
+                </a>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="admin-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="section-content">
+                <h2 class="mb-4">Dashboard</h2>
+                
+                <div class="row g-4 mb-5">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="stat-value" id="total-products">0</div>
+                            <div class="stat-label">Total Products</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                            <div class="stat-value" id="total-orders">0</div>
+                            <div class="stat-label">Total Orders</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-value" id="total-customers">0</div>
+                            <div class="stat-label">Total Customers</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-value" id="total-revenue">$0</div>
+                            <div class="stat-label">Total Revenue</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="product-form">
+                            <h4 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Recent Activity</h4>
+                            <p class="text-muted">Activity tracking will be implemented soon...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Products Section -->
+            <div id="products-section" class="section-content" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>Manage Products</h2>
+                    <button class="btn btn-primary btn-glow" onclick="showAddProduct()">
+                        <i class="fas fa-plus me-2"></i>Add New Product
+                    </button>
+                </div>
+                
+                <!-- Add Product Form -->
+                <div id="add-product-form" class="product-form mb-4" style="display: none;">
+                    <h4 class="mb-3">Add New Product</h4>
+                    <form id="product-form">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Product Name</label>
+                                <input type="text" class="form-control" id="product-name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" id="product-category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="engine">Engine Parts</option>
+                                    <option value="brakes">Brakes</option>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="accessories">Accessories</option>
+                                    <option value="lubricants">Lubricants</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Price ($)</label>
+                                <input type="number" class="form-control" id="product-price" required min="0" step="0.01">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Badge (Optional)</label>
+                                <select class="form-select" id="product-badge">
+                                    <option value="">No Badge</option>
+                                    <option value="New">New</option>
+                                    <option value="Sale">Sale</option>
+                                    <option value="Hot">Hot</option>
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" id="product-description" rows="3"></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Image URL (Optional)</label>
+                                <input type="url" class="form-control" id="product-image" placeholder="https://example.com/image.jpg">
+                            </div>
+                        </div>
+                        <div class="mt-4 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Save Product
+                            </button>
+                            <button type="button" class="btn btn-outline-light" onclick="hideAddProduct()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Products List -->
+                <div class="product-form">
+                    <h4 class="mb-3">All Products</h4>
+                    <div id="products-list">
+                        <p class="text-muted">Loading products...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Orders Section -->
+            <div id="orders-section" class="section-content" style="display: none;">
+                <h2 class="mb-4">Orders Management</h2>
+                <div class="product-form">
+                    <p class="text-muted">Orders management will be implemented soon...</p>
+                </div>
+            </div>
+            
+            <!-- Customers Section -->
+            <div id="customers-section" class="section-content" style="display: none;">
+                <h2 class="mb-4">Customers</h2>
+                <div class="product-form">
+                    <div id="customers-list">
+                        <p class="text-muted">Loading customers...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analytics Section -->
+            <div id="analytics-section" class="section-content" style="display: none;">
+                <h2 class="mb-4">Analytics</h2>
+                <div class="product-form">
+                    <p class="text-muted">Analytics dashboard will be implemented soon...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="assets/js/firebase-config.js"></script>
+    <script src="assets/js/admin.js"></script>
+</body>
+</html>
