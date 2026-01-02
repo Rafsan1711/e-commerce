@@ -5,16 +5,15 @@
  * ============================================
  */
 
-// Firebase configuration - তুমি .env থেকে এইগুলো নিয়ে আসবে
-// এখানে placeholder দিয়ে দিলাম, তুমি তোমার Firebase credentials দিয়ে replace করবে
+// Firebase configuration from environment variables
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID
 };
 
 // Initialize Firebase
@@ -25,8 +24,8 @@ const auth = firebase.auth();
 const db = firebase.database();
 const storage = firebase.storage();
 
-// Admin email (এটা .env থেকে নাও)
-const ADMIN_EMAIL = "admin@jawadsbikeparts.com"; // তোমার admin email এখানে দাও
+// Admin email from environment
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
 console.log('✅ Firebase initialized successfully');
 
